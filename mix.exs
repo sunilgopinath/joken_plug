@@ -15,7 +15,8 @@ defmodule JokenPlug.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger],
+    [applications: [:cowboy, :logger, :plug],
+     extra_applications: [:logger],
      mod: {JokenPlug.Application, []}]
   end
 
@@ -29,6 +30,7 @@ defmodule JokenPlug.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:cowboy, "~> 1.0.0"},
+     {:plug, "~> 1.0"}]
   end
 end
