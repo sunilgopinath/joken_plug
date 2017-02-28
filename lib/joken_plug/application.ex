@@ -8,12 +8,13 @@ defmodule JokenPlug.Application do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
+    port = Application.get_env(:example, :cowboy_port, 8080)
 
     # Define workers and child supervisors to be supervised
     children = [
       # Starts a worker by calling: JokenPlug.Worker.start_link(arg1, arg2, arg3)
       # worker(JokenPlug.Worker, [arg1, arg2, arg3]),
-      Plug.Adapters.Cowboy.child_spec(:http, JokenPlug.HelloWorldPlug, [], port: 8080)
+      Plug.Adapters.Cowboy.child_spec(:http, JokenPlug.Router, [], port: port)
     ]
 
     Logger.info "Started application"
