@@ -40,9 +40,14 @@ defmodule JokenPlug.Router do
   end
 
   get "/admin", @is_admin do
+    ["Bearer " <> incoming_token] = get_req_header(conn, "authorization")
+    role = incoming_token
+    |> token
+    |> peek
+
     conn
     |> put_resp_content_type("text/plain")
-    |> send_resp(200, "Hello Admin")
+    |> send_resp(200, "Hello " <> Map.get(role, "role"))
   end
 
   match _, @skip_auth do
