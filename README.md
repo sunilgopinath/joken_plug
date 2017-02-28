@@ -1,6 +1,6 @@
 # JokenPlug
 
-**TODO: Add description**
+Very basic implementation for demo talk on JWT in elixir. Tests are entirely based off [plug tests](https://github.com/bryanjos/joken/blob/master/test/plug_test.exs)
 
 ## Installation
 
@@ -8,12 +8,14 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `joken_plug` to your list of dependencies in `mix.exs`:
 
 ```elixir
-def deps do
-  [{:joken_plug, "~> 0.1.0"}]
-end
+git clone git@github.com:sunilgopinath/joken_plug.git
+mix deps.get
+mix test
+mix run --no-halt
 ```
+The application is now running at http://localhost:8080
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/joken_plug](https://hexdocs.pm/joken_plug).
 
+## Sources
++ [Joken](https://github.com/bryanjos/joken)
++ [Elixir School](https://elixirschool.com/lessons/specifics/plug/)
