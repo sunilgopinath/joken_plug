@@ -20,6 +20,20 @@ defmodule JokenPlug.RouterTest do
     assert conn.resp_body == "Hello Tester"
   end
 
+  test "generates token with claims properly" do
+    conn = conn(:post, "/add_claims") |> Router.call([])
+    assert conn.status == 200
+
+    token = conn.resp_body
+
+    conn = conn(:get, "/admin")
+    |> put_req_header("authorization", "Bearer " <> token)
+    |> Router.call([])
+
+    assert conn.status == 200
+    assert conn.resp_body == "Hello Admin"
+  end
+
   test "forbids invalid token" do
     conn = conn(:post, "/login") |> Router.call([])
     assert conn.status == 200
@@ -35,7 +49,7 @@ defmodule JokenPlug.RouterTest do
 
   end
 
-  test "returns unauthorized with invalid token" do
+  test "returns page not found" do
     conn = conn(:get, "/", "")
            |> put_req_header("authorization", "invalid-jwt")
            |> Router.call(@opts)

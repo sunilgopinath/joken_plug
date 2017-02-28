@@ -3,8 +3,7 @@ defmodule JokenPlug.Router do
   import Joken
 
   @skip_auth private: %{joken_skip: true}
-
-  @is_not_subject private: %{joken_verify: &JokenPlug.Router.is_not_subject/0}
+  @is_admin private: %{joken_verify: &JokenPlug.Router.is_admin/0}
 
   plug :match
   plug Joken.Plug, verify: &JokenPlug.Router.verify/0
@@ -22,16 +21,28 @@ defmodule JokenPlug.Router do
     |> send_resp(200, compact)
   end
 
+  post "/add_claims", @skip_auth do
+    token = %Joken.Token{}
+    |> with_sub("elixir")
+    |> with_claims(%{role: "admin"})
+    |> sign(hs512("elixrdemo"))
+    |> get_compact
+
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_resp(200, token)
+  end
+
   get "/verify_token" do
     conn
     |> put_resp_content_type("text/plain")
     |> send_resp(200, "Hello Tester")
   end
 
-  post "/custom_function_failure", @is_not_subject do
+  get "/admin", @is_admin do
     conn
     |> put_resp_content_type("text/plain")
-    |> send_resp(200, "I am subject 1234567890")
+    |> send_resp(200, "Hello Admin")
   end
 
   match _, @skip_auth do
@@ -49,10 +60,11 @@ defmodule JokenPlug.Router do
     |> with_sub(1234567890)
   end
 
-  def is_not_subject() do
+  def is_admin() do
     %Joken.Token{}
-    |> Joken.with_validation("sub", &(&1 != 1234567890))
-    |> Joken.with_signer(hs256("secret"))
+    |> with_json_module(Poison)
+    |> with_validation("role", &(&1 == "admin"))
+    |> with_signer(hs512("elixrdemo"))
   end
 
 end
