@@ -24,7 +24,7 @@ defmodule JokenPlug.Router do
   post "/add_claims", @skip_auth do
     token = %Joken.Token{}
     |> with_sub("elixir")
-    |> with_claims(%{role: "admin"})
+    |> with_claims(%{role: "admin", username: "elixirdemo"})
     |> sign(hs512("elixrdemo"))
     |> get_compact
 
@@ -41,13 +41,15 @@ defmodule JokenPlug.Router do
 
   get "/admin", @is_admin do
     ["Bearer " <> incoming_token] = get_req_header(conn, "authorization")
-    role = incoming_token
+    claims = incoming_token
     |> token
     |> peek
 
+    IO.inspect claims
+
     conn
     |> put_resp_content_type("text/plain")
-    |> send_resp(200, "Hello " <> Map.get(role, "role"))
+    |> send_resp(200, "Hello " <> Map.get(claims, "username", "anon"))
   end
 
   match _, @skip_auth do
